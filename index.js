@@ -3,7 +3,7 @@ const gameBoard = () => {
   const columns = 3;
   const board = [];
 
-  function getBoard() {
+  function setBoard() {
     for (let i = 0; i < rows; i++) {
       board[i] = [];
       for (let j = 0; j < columns; j++) {
@@ -13,68 +13,96 @@ const gameBoard = () => {
     return board;
   }
 
-  function firstPlayer() {
+  function getBoard() {
+    return board;
+  }
+
+  return {
+    setBoard,
+    getBoard,
+  };
+};
+
+function createPlayer(name, symbol) {
+  return {
+    name,
+    symbol,
+  };
+}
+
+function gameController(player1, player2, board) {
+  const rows = 3;
+  const columns = 3;
+
+  function firstPlayer(player1, player2) {
     let currentPlayer;
 
     if (Math.random() >= 0.51) {
-      currentPlayer = 1;
+      currentPlayer = player1;
     } else {
-      currentPlayer = 0;
+      currentPlayer = player2;
     }
     return currentPlayer;
   }
 
   function makeMove(currentPlayer, row, col) {
+    const currentBoard = board.getBoard();
+
     if (row < 0 || row >= rows || col < 0 || col >= columns) {
       return false;
     }
-    if (board[row][col] !== '') {
+    if (currentBoard[row][col] !== '') {
       return false;
     }
 
-    if (currentPlayer === 0) {
-      symbol = 'x';
-    } else {
-      symbol = 'o';
-    }
-
-    board[row][col] = symbol;
-
-    return symbol;
+    currentBoard[row][col] = currentPlayer.symbol;
+    return true;
   }
 
   function switchPlayer(currentPlayer) {
-    if (currentPlayer === 0) {
-      currentPlayer = 1;
+    if (currentPlayer === player1) {
+      currentPlayer = player2;
     } else {
-      currentPlayer = 0;
+      currentPlayer = player1;
     }
     return currentPlayer;
   }
 
   return {
-    getBoard,
     firstPlayer,
     makeMove,
     switchPlayer,
   };
-};
+}
 
-const game = gameBoard();
+function checkWinner() {}
 
-game.getBoard();
-console.log(game.getBoard());
+function displayController() {}
 
-let currentPlayer = game.firstPlayer();
+//
 
-console.log(game.makeMove(currentPlayer, 0, 2));
-currentPlayer = game.switchPlayer(currentPlayer);
+const player1 = createPlayer('Simon', 'x');
+const player2 = createPlayer('Alice', 'o');
 
-console.log(game.makeMove(currentPlayer, 1, 2));
-currentPlayer = game.switchPlayer(currentPlayer);
+const board = gameBoard();
+const controller = gameController(player1, player2, board);
+let currentPlayer = controller.firstPlayer(player1, player2);
 
-console.log(game.makeMove(currentPlayer, 2, 2));
-currentPlayer = game.switchPlayer(currentPlayer);
+//
 
-console.log(game.makeMove(currentPlayer, 0, 1));
-currentPlayer = game.switchPlayer(currentPlayer);
+board.setBoard();
+console.log(board.getBoard());
+
+controller;
+
+console.log(controller.makeMove(currentPlayer, 0, 2));
+currentPlayer = controller.switchPlayer(currentPlayer);
+
+console.log(controller.makeMove(currentPlayer, 1, 2));
+currentPlayer = controller.switchPlayer(currentPlayer);
+
+console.log(controller.makeMove(currentPlayer, 2, 2));
+currentPlayer = controller.switchPlayer(currentPlayer);
+
+console.log(controller.makeMove(currentPlayer, 0, 1));
+currentPlayer = controller.switchPlayer(currentPlayer);
