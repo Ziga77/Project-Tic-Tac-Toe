@@ -34,10 +34,10 @@ function gameController(player1, player2, board) {
   const rows = 3;
   const columns = 3;
 
-  function firstPlayer(player1, player2) {
+  function firstPlayer() {
     let currentPlayer;
 
-    if (Math.random() >= 0.51) {
+    if (Math.random() >= 0.5) {
       currentPlayer = player1;
     } else {
       currentPlayer = player2;
@@ -108,6 +108,15 @@ function checkWinner(board, symbol) {
   return false;
 }
 
+function checkTie(board, player1, player2) {
+  const fullBoard = board.every((row) => row.every((cell) => cell !== ''));
+
+  const tie =
+    !checkWinner(board, player1.symbol) && !checkWinner(board, player2.symbol);
+
+  return fullBoard && tie;
+}
+
 function displayController() {}
 
 //
@@ -117,23 +126,51 @@ const player2 = createPlayer('Alice', 'o');
 
 const board = gameBoard();
 const controller = gameController(player1, player2, board);
-let currentPlayer = controller.firstPlayer(player1, player2);
+let currentPlayer = controller.firstPlayer();
 
 //
 
 board.setBoard();
 console.log(board.getBoard());
 
-controller;
+function play(row, column) {
+  const moveValid = controller.makeMove(currentPlayer, row, column);
 
-console.log(controller.makeMove(currentPlayer, 0, 2));
-currentPlayer = controller.switchPlayer(currentPlayer);
+  if (!moveValid) {
+    console.log('Invalid move!');
+    return;
+  }
 
-console.log(controller.makeMove(currentPlayer, 1, 2));
-currentPlayer = controller.switchPlayer(currentPlayer);
+  const currentBoard = board.getBoard();
 
-console.log(controller.makeMove(currentPlayer, 2, 2));
-currentPlayer = controller.switchPlayer(currentPlayer);
+  if (checkWinner(board.getBoard(), currentPlayer.symbol)) {
+    console.log(`${currentPlayer.name} wins!`);
+    return;
+  }
 
-console.log(controller.makeMove(currentPlayer, 0, 1));
-currentPlayer = controller.switchPlayer(currentPlayer);
+  if (checkTie(currentBoard, player1, player2)) {
+    console.log("It's a tie");
+    return;
+  }
+
+  currentPlayer = controller.switchPlayer(currentPlayer);
+  console.log('no winner yet');
+}
+
+//WIN
+//play(0, 2);
+//play(1, 2);
+//play(0, 1);
+//play(2, 2);
+//play(0, 0);
+
+//TIE!
+play(1, 1);
+play(0, 0);
+play(0, 2);
+play(0, 1);
+play(1, 0);
+play(1, 2);
+play(2, 1);
+play(2, 0);
+play(2, 2);
