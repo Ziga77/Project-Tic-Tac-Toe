@@ -14,11 +14,10 @@ body {
 }
 
 .board-container {
-  border: solid lightblue 3px;
+  border: solid black 3px;
   display: grid;
   grid-template-columns: repeat(3, 100px);
   grid-template-rows: repeat(3, 100px);
-  color: lightblue;
 }
 
 .cell {
@@ -28,5 +27,6 @@ body {
   align-items: center;
   font-size: 2rem;
   cursor: pointer;
-  border: 1px solid black;
+  border: 2px solid black;
+  color: black;
 }
