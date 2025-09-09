@@ -117,7 +117,37 @@ function checkTie(board, player1, player2) {
   return fullBoard && tie;
 }
 
-function displayController() {}
+const displayController = (() => {
+  const boardContainer = document.querySelector('.board-container');
+
+  function render(boardArray) {
+    boardContainer.innerHTML = '';
+
+    boardArray.forEach((row, rowIndex) => {
+      row.forEach((cell, colIndex) => {
+        const cellContainer = document.createElement('div');
+
+        cellContainer.classList.add('cell');
+        cellContainer.dataset.row = rowIndex;
+        cellContainer.dataset.col = colIndex;
+        cellContainer.textContent = cell;
+
+        cellContainer.addEventListener('click', () => {
+          if (!gameOver) {
+            play(rowIndex, colIndex);
+            render(board.getBoard());
+          }
+        });
+
+        boardContainer.appendChild(cellContainer);
+      });
+    });
+  }
+
+  return {
+    render,
+  };
+})();
 
 //
 
@@ -127,13 +157,19 @@ const player2 = createPlayer('Alice', 'o');
 const board = gameBoard();
 const controller = gameController(player1, player2, board);
 let currentPlayer = controller.firstPlayer();
+let gameOver = false;
 
 //
 
 board.setBoard();
-console.log(board.getBoard());
+displayController.render(board.getBoard());
 
 function play(row, column) {
+  if (gameOver) {
+    console.log('Game is over!');
+    return;
+  }
+
   const moveValid = controller.makeMove(currentPlayer, row, column);
 
   if (!moveValid) {
@@ -145,16 +181,20 @@ function play(row, column) {
 
   if (checkWinner(board.getBoard(), currentPlayer.symbol)) {
     console.log(`${currentPlayer.name} wins!`);
+    gameOver = true;
     return;
   }
 
   if (checkTie(currentBoard, player1, player2)) {
-    console.log("It's a tie");
+    console.log("It's a tie!");
+    gameOver = true;
     return;
   }
 
   currentPlayer = controller.switchPlayer(currentPlayer);
-  console.log('no winner yet');
+  console.log('No winner yet!');
+
+  displayController.render(board.getBoard());
 }
 
 //WIN
@@ -163,14 +203,15 @@ function play(row, column) {
 //play(0, 1);
 //play(2, 2);
 //play(0, 0);
+//play(1, 2);
 
 //TIE!
-play(1, 1);
-play(0, 0);
-play(0, 2);
-play(0, 1);
-play(1, 0);
-play(1, 2);
-play(2, 1);
-play(2, 0);
-play(2, 2);
+//play(1, 1);
+//play(0, 0);
+//play(0, 2);
+//play(0, 1);
+//play(1, 0);
+//play(1, 2);
+//play(2, 1);
+//play(2, 0);
+//play(2, 2);
